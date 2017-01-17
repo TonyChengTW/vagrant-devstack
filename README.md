@@ -21,7 +21,7 @@ Install the following applications on your local machine first:
 Grab this repo and do a `vagrant up`, like so:
 
 ```bash
-git clone https://github.com/wow73611/vagrant-devstack
+git clone https://github.com/TonyChengTW/vagrant-devstack
 cd vagrant-devstack
 vagrant up
 ```
