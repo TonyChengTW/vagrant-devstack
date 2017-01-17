@@ -1,11 +1,35 @@
+# global parameters
+#
+provider: libvirt
 box_name: centos/7
-#box_url:
-box_hostname: devstackcentos7
+box_hostname: 'devstackcentos7'
 vm_memory: 8192
 vm_cpus: 4
-internal1_ip: 172.20.1.11
-internal1_netmask: 255.255.255.0
-external1_ip: 172.20.2.1
-external1_netmask: 255.255.255.0
+
+# provider : libvirt
+# 
+libvirt_host: "127.0.0.1"
+libvirt_driver: kvm
+libvirt_username: jenkins
+libvirt_connect_via_ssh: true
+libvirt_storage_pool_name: default
+libvirt_nested: true
+libvirt_ip: "192.168.120.3"
+libvirt_netmask: "255.255.252.0"
+libvirt_gateway: "192.168.120.254"
+libvirt_mac: '52:54:00:ed:bf:53'
+libvirt_dev: br0
+libvirt_type: bridge
+libvirt_mode: bridge
+libvirt_mgmt_ip: 172.20.178.0/24
+libvirt_mgmt_mode: nat
+
+# provider : virtualbox
+#
+internal1_ip: "172.20.1.11"
+internal1_netmask: "255.255.255.0"
+external1_ip: "172.20.2.1"
+external1_netmask: "255.255.255.0"
 vm_forward_port: 80
 host_forward_port: 8080
+
