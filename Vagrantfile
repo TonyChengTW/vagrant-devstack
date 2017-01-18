@@ -1,5 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+#
+# Edit by Tony Cheng 
+# Email : tonycheng@cloudcube.com.tw
+#
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2" if not defined? VAGRANTFILE_API_VERSION
@@ -7,7 +11,7 @@ VAGRANTFILE_API_VERSION = "2" if not defined? VAGRANTFILE_API_VERSION
 conf = {}
 
 require 'yaml'
-conf_path = ENV.fetch('USER_CONF','config.yaml')
+conf_path = ENV.fetch('USER_CONF','vagrantfile-config.yaml')
 if File.file?(conf_path)
     user_conf = YAML.load_file(conf_path)
     conf.update(user_conf)
@@ -44,68 +48,77 @@ def config_lv_provider(vm, conf)
     end
 end
 
+# -----------------  Box Start -------------------------------------------------------
 def config_lv_define_box1(vm, conf)
-  #vm.define :box1 do |box1|
   vm.define conf['hostname_box1'] do |box1|
     box1.vm.hostname = conf['hostname_box1']
     box1.vm.box = conf['imagename_box1']
+#    box1.vm.network :private_network,
+#                                :libvirt__network_name => "mgmt",
+#                                :mac => conf['libvirt_mgmt_mac_box1'],
+#                                :ip => conf['libvirt_mgmt_ip_box1'],
+#                                :libvirt__netmask => conf['libvirt_mgmt_netmask_box1'],
+#                                :libvirt__dhcp_enabled => false,
+#                                :autostart => true
     box1.vm.network :public_network,
-                                :ip => conf['libvirt_ip_box1'],
-                                :netmask => conf['libvirt_netmask_box1'],
-                                :gateway => conf['libvirt_gateway_box1'],
-                                :mac => conf['libvirt_mac_box1'],
+                                :network_name => "ext",
+                                :ip => conf['libvirt_ext_ip_box1'],
+                                :netmask => conf['libvirt_ext_netmask_box1'],
+                                :gateway => conf['libvirt_ext_gateway_box1'],
+                                :mac => conf['libvirt_ext_mac_box1'],
                                 :dev => conf['libvirt_dev'],
                                 :type => conf['libvirt_type'],
                                 :mode => conf['libvirt_mode']
+    box1.vm.network :private_network,
+                                :libvirt__network_name => "ceph",
+                                :mac => conf['libvirt_ceph_mac_box1'],
+                                :ip => conf['libvirt_ceph_ip_box1'],
+                                :libvirt__netmask => conf['libvirt_ceph_netmask_box1'],
+                                :libvirt__dhcp_enabled => false,
+                                :autostart => true
+    box1.vm.network :private_network,
+                                :libvirt__network_name => "vm_tunnel",
+                                :mac => conf['libvirt_tunnel_mac_box1'],
+                                :ip => conf['libvirt_tunnel_ip_box1'],
+                                :libvirt__netmask => conf['libvirt_tunnel_netmask_box1'],
+                                :libvirt__dhcp_enabled => false,
+                                :autostart => true
     box1.vm.provider :libvirt do |domain|
       domain.memory = conf['memory_box1']
       domain.cpus = conf['cpus_box1']
-      domain.management_network_name = 'vagrant-libvirt-mgmt'
-      domain.management_network_address = conf['libvirt_mgmt_ip_box1']
+      domain.management_network_name = 'vagrantmgmt_box1'
+      domain.management_network_address = conf['libvirt_vagrantmgmt_ip_box1']
       domain.management_network_mode = conf['libvirt_mgmt_mode']
     end
+    config_provision(box1.vm, conf)
   end
 end
+#  --------------  Box End -------------------------------------------------------
 
-def config_lv_define_box2(vm, conf)
-  vm.define :box2 do |box2|
-    box2.vm.hostname = conf['hostname_box2']
-    box2.vm.box = conf['imagename_box2']
-    box2.vm.network :public_network,
-                                :ip => conf['libvirt_ip_box2'],
-                                :netmask => conf['libvirt_netmask_box2'],
-                                :gateway => conf['libvirt_gateway_box2'],
-                                :mac => conf['libvirt_mac_box2'],
-                                :dev => conf['libvirt_dev'],
-                                :type => conf['libvirt_type'],
-                                :mode => conf['libvirt_mode']
-    box1.vm.provider :libvirt do |domain|
-      domain.memory = conf['memory_box2']
-      domain.cpus = conf['cpus_box2']
-      domain.management_network_name = 'vagrant-libvirt-mgmt'
-      domain.management_network_address = conf['libvirt_mgmt_ip_box2']
-      domain.management_network_mode = conf['libvirt_mgmt_mode']
-    end
-  end
-end
-
+#  --------------  Provision Start ----------------------------------------------------
 def config_provision(vm, conf)
-    vm.provision :ansible do |ansible|
-        ansible.host_key_checking = false
-        ansible.playbook = "ansible/playbook.yml"
-        ansible.verbose = "vv"
-        #ansible.extra_vars = {}
-    end
-    vm.provision :shell, :inline => "cd /opt/devstack; sudo -u ubuntu env HOME=/home/ubuntu ./stack.sh"
+    vm.provision :shell, run: "always", inline: "setenforce 0"
+    vm.provision :shell, run: "always", inline: "sed -i 's/^SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config"
+    vm.provision :shell, run: "always", inline: "yum -y install net-tools expect"
+    vm.provision :shell, run: "always", path: "setrootpasswd.sh"
+    vm.provision :shell, run: "always", inline: "ifup eth1"
+    vm.provision :shell, run: "always", inline: "eval `route -n|awk '{ if ($8 ==\"eth0\" && $2 != \"0.0.0.0\") print \"route del default gw \" $2; }'`"
+    vm.provision :shell, run: "always", inline: "sed -i 's/^#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config"
+    vm.provision :shell, run: "always", inline: "sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config && systemctl restart sshd"
+    #vm.provision :ansible do |ansible|
+    #    ansible.host_key_checking = false
+    #    ansible.playbook = "ansible/playbook.yml"
+    #    ansible.verbose = "vv"
+    #    #ansible.extra_vars = {}
+    #end
+    #vm.provision :shell, :inline => "cd /opt/devstack; sudo -u ubuntu env HOME=/home/ubuntu ./stack.sh"
     # interface should match external_interface var in devstack.yml
     #vm.provision :shell, :inline => "ovs-vsctl add-port br-ex enp0s9"
     #vm.provision :shell, :inline => "virsh net-destroy default"
 end
+#  --------------  Provision End ----------------------------------------------------
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    #config.vm.box = conf['box_name']
-    #config.vm.box_url = conf['box_url'] if conf['box_url']
-    #config.vm.hostname = conf['box_hostname']
     if Vagrant.has_plugin?("vagrant-cachier")
         config.cache.scope = :box
     end
@@ -129,12 +142,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if conf['provider'] == 'libvirt'
         config_lv_provider(config.vm, conf)
         config_lv_define_box1(config.vm, conf)
-        #config_lv_define_box2(config.vm, conf)
     end
-    #config_provision(config.vm, conf)
 
     if conf['local_sync_folder']
-        config.vm.synced_folder conf['local_sync_folder'], "/opt"
+        config.vm.synced_folder conf['local_sync_folder'], "/vagrant"
     end
 end
 

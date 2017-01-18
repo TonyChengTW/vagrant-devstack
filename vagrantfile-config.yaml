@@ -1,11 +1,16 @@
+# Edit by Tony Cheng 
+# Email : tonycheng@cloudcube.com.tw
+#
+
 # global parameters
 #
 provider: libvirt
+local_sync_folder: "/home/jenkins/vagrant-fitos20"
 
 # provider : libvirt
 # 
 #===============================================
-# Global
+# libvirt
 #
 libvirt_host: "127.0.0.1"
 libvirt_driver: kvm
@@ -17,6 +22,7 @@ libvirt_dev: br0
 libvirt_type: bridge
 libvirt_mode: bridge
 libvirt_mgmt_mode: nat
+
 #===============================================
 #  box1
 #
@@ -24,23 +30,24 @@ imagename_box1: "centos/7"
 hostname_box1: "controller1"
 memory_box1: 8192
 cpus_box1: 4
-libvirt_ip_box1: "192.168.120.101"
-libvirt_mgmt_ip_box1: "172.20.178.0/24"
-libvirt_netmask_box1: "255.255.252.0"
-libvirt_gateway_box1: "192.168.120.254"
-libvirt_mac_box1: "52:54:00:ed:bf:53"
+libvirt_vagrantmgmt_ip_box1: "172.20.177.0/24"
+#libvirt_mgmt_mac_box1: "52:54:00:ed:bf:52"
+#libvirt_mgmt_ip_box1: "172.20.178.101"
+#libvirt_mgmt_netmask_box1: "255.255.255.0"
+libvirt_ext_mac_box1: "52:54:00:ed:bf:53"
+libvirt_ext_ip_box1: "192.168.120.101"
+libvirt_ext_netmask_box1: "255.255.252.0"
+libvirt_ext_gateway_box1: "192.168.120.254"
+libvirt_ceph_mac_box1: "52:54:00:ed:bf:54"
+libvirt_ceph_ip_box1: "10.0.202.101"
+libvirt_ceph_netmask_box1: "255.255.255.0"
+libvirt_tunnel_mac_box1: "52:54:00:ed:bf:55"
+libvirt_tunnel_ip_box1: "192.168.188.101"
+libvirt_tunnel_netmask_box1: "255.255.255.0"
+
 #===============================================
 #  box2
 #
-imagename_box2: "centos/7"
-hostname_box2: "compute1"
-memory_box2: 4096
-cpus_box2: 2
-libvirt_ip_box2: "192.168.120.111"
-libvirt_mgmt_ip_box2: "172.20.178.0/24"
-libvirt_netmask_box2: "255.255.252.0"
-libvirt_gateway_box2: "192.168.120.254"
-libvirt_mac_box2: "52:54:00:ed:bf:54"
 #===============================================
 # provider : virtualbox
 #
@@ -50,4 +57,3 @@ external1_ip: "172.20.2.1"
 external1_netmask: "255.255.255.0"
 vm_forward_port: 80
 host_forward_port: 8080
-

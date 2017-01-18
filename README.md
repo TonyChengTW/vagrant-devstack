@@ -21,22 +21,21 @@ Install the following applications on your local machine first:
 Grab this repo and do a `vagrant up`, like so:
 
 ```bash
-git clone https://github.com/TonyChengTW/vagrant-devstack
-cd vagrant-devstack
+git clone https://github.com/TonyChengTW/vagrant-fitos20
+cd vagrant-fitos20
 vagrant up
 ```
+There are two nodes as behalf of compute1 and controller1
 
-
-The Vagrantfile use config.yaml file as default configuration.
+The Vagrantfile use vagrantfile-config.yaml file as default configuration.
 You can define another configuration file by the following: 
 
-```bash
-export USER_CONF=my.yaml && vagrant up
-
-or
-
-USER_CONF=my.yaml vagrant up
-```
+The NICs of each node are:
+eth0 --> vagrant management network
+eth1 --> openstack management network (endpoint network)
+eth2 --> openstack external network
+eth3 --> ceph public & cluster
+eth4 --> VM tunnel
 
 ## Horizon
 

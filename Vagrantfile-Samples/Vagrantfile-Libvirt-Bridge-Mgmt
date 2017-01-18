@@ -29,5 +29,6 @@ Vagrant.configure("2") do |config|
     centos7.vm.provision :shell, run: "always", inline: "yum -y install net-tools"
     centos7.vm.provision :shell, run: "always", inline: "ifup eth1"
     centos7.vm.provision :shell, run: "always", inline: "eval `route -n|awk '{ if ($8 ==\"eth0\" && $2 != \"0.0.0.0\") print \"route del default gw \" $2; }'`"
+    centos7.vm.provision :shell, run: "always", inline: "sed -i 's/^#PermitRootLogin yes/PermitRootLogin yes/' /etc/ssh/sshd_config && systemctl restart sshd"
   end
 end
