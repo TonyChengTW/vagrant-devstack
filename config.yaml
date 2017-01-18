@@ -1,29 +1,47 @@
 # global parameters
 #
 provider: libvirt
-box_name: centos/7
-box_hostname: 'devstackcentos7'
-vm_memory: 8192
-vm_cpus: 4
 
 # provider : libvirt
 # 
+#===============================================
+# Global
+#
 libvirt_host: "127.0.0.1"
 libvirt_driver: kvm
 libvirt_username: jenkins
 libvirt_connect_via_ssh: true
 libvirt_storage_pool_name: default
 libvirt_nested: true
-libvirt_ip: "192.168.120.3"
-libvirt_netmask: "255.255.252.0"
-libvirt_gateway: "192.168.120.254"
-libvirt_mac: '52:54:00:ed:bf:53'
 libvirt_dev: br0
 libvirt_type: bridge
 libvirt_mode: bridge
-libvirt_mgmt_ip: 172.20.178.0/24
 libvirt_mgmt_mode: nat
-
+#===============================================
+#  box1
+#
+imagename_box1: "centos/7"
+hostname_box1: "controller1"
+memory_box1: 8192
+cpus_box1: 4
+libvirt_ip_box1: "192.168.120.101"
+libvirt_mgmt_ip_box1: "172.20.178.0/24"
+libvirt_netmask_box1: "255.255.252.0"
+libvirt_gateway_box1: "192.168.120.254"
+libvirt_mac_box1: "52:54:00:ed:bf:53"
+#===============================================
+#  box2
+#
+imagename_box2: "centos/7"
+hostname_box2: "compute1"
+memory_box2: 4096
+cpus_box2: 2
+libvirt_ip_box2: "192.168.120.111"
+libvirt_mgmt_ip_box2: "172.20.178.0/24"
+libvirt_netmask_box2: "255.255.252.0"
+libvirt_gateway_box2: "192.168.120.254"
+libvirt_mac_box2: "52:54:00:ed:bf:54"
+#===============================================
 # provider : virtualbox
 #
 internal1_ip: "172.20.1.11"

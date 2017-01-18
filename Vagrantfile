@@ -44,23 +44,46 @@ def config_lv_provider(vm, conf)
     end
 end
 
-def config_lv_define(vm, conf)
-    #vm.define :conf['box_hostname'] do |libvirtos|
-  vm.define :devstack1 do |centos7|
-    centos7.vm.box = conf['box_name']
-    centos7.vm.network :public_network,
-                                ip: conf['libvirt_ip'],
-                                :netmask => conf['libvirt_netmask'],
-                                :gateway => conf['libvirt_gateway'],
-                                :mac => conf['libvirt_mac'],
+def config_lv_define_box1(vm, conf)
+  #vm.define :box1 do |box1|
+  vm.define conf['hostname_box1'] do |box1|
+    box1.vm.hostname = conf['hostname_box1']
+    box1.vm.box = conf['imagename_box1']
+    box1.vm.network :public_network,
+                                :ip => conf['libvirt_ip_box1'],
+                                :netmask => conf['libvirt_netmask_box1'],
+                                :gateway => conf['libvirt_gateway_box1'],
+                                :mac => conf['libvirt_mac_box1'],
                                 :dev => conf['libvirt_dev'],
                                 :type => conf['libvirt_type'],
                                 :mode => conf['libvirt_mode']
-    centos7.vm.provider :libvirt do |domain|
-      domain.memory = conf['vm_memory']
-      domain.cpus = conf['vm_cpus']
+    box1.vm.provider :libvirt do |domain|
+      domain.memory = conf['memory_box1']
+      domain.cpus = conf['cpus_box1']
       domain.management_network_name = 'vagrant-libvirt-mgmt'
-      domain.management_network_address = conf['libvirt_mgmt_ip']
+      domain.management_network_address = conf['libvirt_mgmt_ip_box1']
+      domain.management_network_mode = conf['libvirt_mgmt_mode']
+    end
+  end
+end
+
+def config_lv_define_box2(vm, conf)
+  vm.define :box2 do |box2|
+    box2.vm.hostname = conf['hostname_box2']
+    box2.vm.box = conf['imagename_box2']
+    box2.vm.network :public_network,
+                                :ip => conf['libvirt_ip_box2'],
+                                :netmask => conf['libvirt_netmask_box2'],
+                                :gateway => conf['libvirt_gateway_box2'],
+                                :mac => conf['libvirt_mac_box2'],
+                                :dev => conf['libvirt_dev'],
+                                :type => conf['libvirt_type'],
+                                :mode => conf['libvirt_mode']
+    box1.vm.provider :libvirt do |domain|
+      domain.memory = conf['memory_box2']
+      domain.cpus = conf['cpus_box2']
+      domain.management_network_name = 'vagrant-libvirt-mgmt'
+      domain.management_network_address = conf['libvirt_mgmt_ip_box2']
       domain.management_network_mode = conf['libvirt_mgmt_mode']
     end
   end
@@ -80,10 +103,9 @@ def config_provision(vm, conf)
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    config.vm.box = conf['box_name']
-    config.vm.box_url = conf['box_url'] if conf['box_url']
-    config.vm.hostname = conf['box_hostname']
-
+    #config.vm.box = conf['box_name']
+    #config.vm.box_url = conf['box_url'] if conf['box_url']
+    #config.vm.hostname = conf['box_hostname']
     if Vagrant.has_plugin?("vagrant-cachier")
         config.cache.scope = :box
     end
@@ -106,7 +128,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     if conf['provider'] == 'libvirt'
         config_lv_provider(config.vm, conf)
-        config_lv_define(config.vm, conf)
+        config_lv_define_box1(config.vm, conf)
+        #config_lv_define_box2(config.vm, conf)
     end
     #config_provision(config.vm, conf)
 
