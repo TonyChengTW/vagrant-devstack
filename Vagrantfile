@@ -48,7 +48,7 @@ def config_lv_provider(vm, conf)
     end
 end
 
-# -----------------  Box Start -------------------------------------------------------
+# -----------------  Box1 Start -------------------------------------------------------
 def config_lv_define_box1(vm, conf)
   vm.define conf['hostname_box1'] do |box1|
     box1.vm.hostname = conf['hostname_box1']
@@ -96,8 +96,57 @@ def config_lv_define_box1(vm, conf)
     config_provision(box1.vm, conf)
   end
 end
-#  --------------  Box End -------------------------------------------------------
+#  --------------  Box1 End -------------------------------------------------------
 
+# -----------------  Box2 Start -------------------------------------------------------
+def config_lv_define_box2(vm, conf)
+  vm.define conf['hostname_box2'] do |box2|
+    box2.vm.hostname = conf['hostname_box2']
+    box2.vm.box = conf['imagename_box2']
+    box2.vm.network :private_network,
+                                :libvirt__network_name => "mgmt",
+                                :mac => conf['libvirt_mgmt_mac_box2'],
+                                :ip => conf['libvirt_mgmt_ip_box2'],
+                                :libvirt__netmask => conf['libvirt_mgmt_netmask_box2'],
+                                :libvirt__dhcp_enabled => false,
+                                :libvirt__forward_mode => "none",
+                                :autostart => true
+    box2.vm.network :public_network,
+                                :network_name => "ext",
+                                :ip => conf['libvirt_ext_ip_box2'],
+                                :netmask => conf['libvirt_ext_netmask_box2'],
+                                :gateway => conf['libvirt_ext_gateway_box2'],
+                                :mac => conf['libvirt_ext_mac_box2'],
+                                :dev => conf['libvirt_dev'],
+                                :type => conf['libvirt_type'],
+                                :mode => conf['libvirt_mode']
+    box2.vm.network :private_network,
+                                :libvirt__network_name => "ceph",
+                                :mac => conf['libvirt_ceph_mac_box2'],
+                                :ip => conf['libvirt_ceph_ip_box2'],
+                                :libvirt__netmask => conf['libvirt_ceph_netmask_box2'],
+                                :libvirt__dhcp_enabled => false,
+                                :libvirt__forward_mode => "none",
+                                :autostart => true
+    box2.vm.network :private_network,
+                                :libvirt__network_name => "vm_tunnel",
+                                :mac => conf['libvirt_tunnel_mac_box2'],
+                                :ip => conf['libvirt_tunnel_ip_box2'],
+                                :libvirt__netmask => conf['libvirt_tunnel_netmask_box2'],
+                                :libvirt__dhcp_enabled => false,
+                                :libvirt__forward_mode => "none",
+                                :autostart => true
+    box2.vm.provider :libvirt do |domain|
+      domain.memory = conf['memory_box2']
+      domain.cpus = conf['cpus_box2']
+      domain.management_network_name = 'vagrantmgmt'
+      domain.management_network_address = conf['libvirt_vagrantmgmt_ip_box2']
+      domain.management_network_mode = conf['libvirt_mgmt_mode']
+    end
+    config_provision(box2.vm, conf)
+  end
+end
+#  --------------  Box2 End -------------------------------------------------------
 #  --------------  Provision Start ----------------------------------------------------
 def config_provision(vm, conf)
     vm.provision :shell, run: "always", inline: "setenforce 0"
@@ -120,7 +169,6 @@ def config_provision(vm, conf)
     #vm.provision :shell, :inline => "virsh net-destroy default"
 end
 #  --------------  Provision End ----------------------------------------------------
-
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if Vagrant.has_plugin?("vagrant-cachier")
         config.cache.scope = :box
@@ -145,6 +193,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if conf['provider'] == 'libvirt'
         config_lv_provider(config.vm, conf)
         config_lv_define_box1(config.vm, conf)
+        config_lv_define_box2(config.vm, conf)
     end
 
     if conf['local_sync_folder']

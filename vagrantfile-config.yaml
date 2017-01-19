@@ -48,6 +48,25 @@ libvirt_tunnel_netmask_box1: "255.255.255.0"
 #===============================================
 #  box2
 #
+imagename_box2: "centos/7"
+hostname_box2: "compute1"
+memory_box2: 4096
+cpus_box2: 4
+libvirt_vagrantmgmt_ip_box2: "172.20.177.0/24"
+libvirt_mgmt_mac_box2: "52:54:00:ed:bf:62"
+libvirt_mgmt_ip_box2: "172.20.178.111"
+libvirt_mgmt_netmask_box2: "255.255.255.0"
+libvirt_ext_mac_box2: "52:54:00:ed:bf:63"
+libvirt_ext_ip_box2: "192.168.120.111"
+libvirt_ext_netmask_box2: "255.255.252.0"
+libvirt_ext_gateway_box2: "192.168.120.254"
+libvirt_ceph_mac_box2: "52:54:00:ed:bf:64"
+libvirt_ceph_ip_box2: "10.0.202.111"
+libvirt_ceph_netmask_box2: "255.255.255.0"
+libvirt_tunnel_mac_box2: "52:54:00:ed:bf:65"
+libvirt_tunnel_ip_box2: "192.168.188.111"
+libvirt_tunnel_netmask_box2: "255.255.255.0"
+
 #===============================================
 # provider : virtualbox
 #
