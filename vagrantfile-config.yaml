@@ -31,9 +31,9 @@ hostname_box1: "controller1"
 memory_box1: 8192
 cpus_box1: 4
 libvirt_vagrantmgmt_ip_box1: "172.20.177.0/24"
-#libvirt_mgmt_mac_box1: "52:54:00:ed:bf:52"
-#libvirt_mgmt_ip_box1: "172.20.178.101"
-#libvirt_mgmt_netmask_box1: "255.255.255.0"
+libvirt_mgmt_mac_box1: "52:54:00:ed:bf:52"
+libvirt_mgmt_ip_box1: "172.20.178.101"
+libvirt_mgmt_netmask_box1: "255.255.255.0"
 libvirt_ext_mac_box1: "52:54:00:ed:bf:53"
 libvirt_ext_ip_box1: "192.168.120.101"
 libvirt_ext_netmask_box1: "255.255.252.0"

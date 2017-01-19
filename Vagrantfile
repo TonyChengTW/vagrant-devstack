@@ -53,13 +53,14 @@ def config_lv_define_box1(vm, conf)
   vm.define conf['hostname_box1'] do |box1|
     box1.vm.hostname = conf['hostname_box1']
     box1.vm.box = conf['imagename_box1']
-#    box1.vm.network :private_network,
-#                                :libvirt__network_name => "mgmt",
-#                                :mac => conf['libvirt_mgmt_mac_box1'],
-#                                :ip => conf['libvirt_mgmt_ip_box1'],
-#                                :libvirt__netmask => conf['libvirt_mgmt_netmask_box1'],
-#                                :libvirt__dhcp_enabled => false,
-#                                :autostart => true
+    box1.vm.network :private_network,
+                                :libvirt__network_name => "mgmt",
+                                :mac => conf['libvirt_mgmt_mac_box1'],
+                                :ip => conf['libvirt_mgmt_ip_box1'],
+                                :libvirt__netmask => conf['libvirt_mgmt_netmask_box1'],
+                                :libvirt__dhcp_enabled => false,
+                                :libvirt__forward_mode => "none",
+                                :autostart => true
     box1.vm.network :public_network,
                                 :network_name => "ext",
                                 :ip => conf['libvirt_ext_ip_box1'],
@@ -75,6 +76,7 @@ def config_lv_define_box1(vm, conf)
                                 :ip => conf['libvirt_ceph_ip_box1'],
                                 :libvirt__netmask => conf['libvirt_ceph_netmask_box1'],
                                 :libvirt__dhcp_enabled => false,
+                                :libvirt__forward_mode => "none",
                                 :autostart => true
     box1.vm.network :private_network,
                                 :libvirt__network_name => "vm_tunnel",
@@ -82,11 +84,12 @@ def config_lv_define_box1(vm, conf)
                                 :ip => conf['libvirt_tunnel_ip_box1'],
                                 :libvirt__netmask => conf['libvirt_tunnel_netmask_box1'],
                                 :libvirt__dhcp_enabled => false,
+                                :libvirt__forward_mode => "none",
                                 :autostart => true
     box1.vm.provider :libvirt do |domain|
       domain.memory = conf['memory_box1']
       domain.cpus = conf['cpus_box1']
-      domain.management_network_name = 'vagrantmgmt_box1'
+      domain.management_network_name = 'vagrantmgmt'
       domain.management_network_address = conf['libvirt_vagrantmgmt_ip_box1']
       domain.management_network_mode = conf['libvirt_mgmt_mode']
     end
